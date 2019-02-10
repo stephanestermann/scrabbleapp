@@ -68,7 +68,7 @@ export default {
       const eingabePunkteZug=this.zug.totalPunkteZug;
       if (eingabePunkteZug == "" || eingabePunkteZug.length == 0 || eingabePunkteZug == null || isNaN(eingabePunkteZug)) {
         return;
-      }
+      }  
       let newScrabblezug = {
         totalPunkteZug: eingabePunkteZug,
         bingo: this.zug.bingo
