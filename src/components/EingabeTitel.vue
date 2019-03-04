@@ -1,15 +1,13 @@
 <template>
 <div class="eingabeTitel">
-  <label v-if="spielzug<=1">Beginn Anica</label>
-  <label v-else-if="getIsSpielerAmZug(1)">Anica's Zug</label>
-
+  <label class="nameLabel" v-if="spielzug<=1">Beginn Anica</label>
+  <label class="nameLabel" v-else-if="getIsSpielerAmZug(1)">Anica's Zug</label>
   <input type="radio" id="Anica" value=1 v-if="spielzug==1" v-model="beginner" v-on:change="onBeginnChange"/>
-
-  <label v-if="spielzug<=1">Beginn Steph</label>
-  <label v-else-if="getIsSpielerAmZug(2)">Steph's Zug</label>    
-
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <label class="nameLabel" v-if="spielzug<=1">Beginn Steph</label>
+  <label class="nameLabel" v-else-if="getIsSpielerAmZug(2)">Steph's Zug</label>    
   <input type="radio" id="Steph" value=2 v-if="spielzug==1" v-model="beginner" v-on:change="onBeginnChange"/>
-  <br>  			
+  <br /><br />  			
 </div>
 </template>
 
@@ -44,3 +42,16 @@ export default {
   }
 };
 </script>
+
+<style>
+.eingabeTitel {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.nameLabel {
+  text-decoration: underline;
+  font-weight: bold;
+  font-size: x-large;
+}
+</style>
