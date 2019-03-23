@@ -1,49 +1,68 @@
 <template>
 <div class="uebersicht">
-  <form v-on:submit.prevent="addNewScrabblezug">
+  <form v-if="!spielGeschlossen" v-on:submit.prevent="addNewScrabblezug">
     <EingabeTitel :spielzug="spielzug" @changed="onBeginnChange" />
     <div class="inputArea">
     <div>
-    <label>Wortpunkte für diesen Zug: <input v-model="zug.punkteZug" /></label>
+    <label>Wortpunkte für diesen Zug: <input v-model="zug.punkteZug" maxlength="3" /></label>
     <br />
     <label>Bingo: <input type="checkbox" v-model="zug.bingo" /></label>
-    <label>&nbsp&nbsp Gegner hat angezweifelt: <input type="checkbox" v-model="zug.hatAngezweifelt" /></label>
+    <label>&nbsp;&nbsp;Gegner hat angezweifelt: <input type="checkbox" v-model="zug.hatAngezweifelt" /></label>
+    <label>&nbsp;&nbsp;Spiel beendet: <input type="checkbox" v-model="zug.hatSpielBeendet" /></label>
     </div>    
     <div v-if="zug.hatAngezweifelt">
       <label>Wort korrekt <input type="radio" id="Wort korrekt" value=0 v-model="zug.angezweifeltKorrekt" /></label>
-      &nbsp&nbsp
+      &nbsp;&nbsp;
       <label>Wort falsch <input type="radio" id="Wort falsch" value=1 v-model="zug.angezweifeltKorrekt" /></label>
     </div>
+    <div v-if="zug.hatSpielBeendet">
+      <label>Restpunkte Gegner: <input v-model="zug.restpunkteGegner" maxlength="2"/></label>
+    </div>
     <br />
-    <button type="submit" v-if="(beginnEins || beginnZwei)">Scrabblezug eingeben</button><br /><br />
+    <button type="submit" v-if="(beginnEins || beginnZwei)">Scrabblezug eingeben</button>
+    <br /><br />
     </div>    
   </form>
-  <TableZuege :scrabbleZuege="scrabbleZuege" />     
+  <div class="saveGame" v-if="spielGeschlossen">
+    <button v-on:click="saveGame">Spiel speichern !</button>
+    <br /><br />
+  </div>
+  <AnsichtsSwitch class="ansichtsAuswahl" :aktAnsicht="aktAnsicht" @changed="onAnsichtChange" />
+  <TableZuege v-if="aktAnsicht===1" :scrabbleZuege="scrabbleZuege" />     
+  <TableMonths v-if="aktAnsicht===2" :resultForMonth="resultForMonth" />       
 </div>
 </template>
 
 <script>
-import EingabeTitel from './EingabeTitel.vue'
-import TableZuege from './TableZuege/TableZuege.vue'
+import AnsichtsSwitch from './AnsichtsSwitch.vue';
+import EingabeTitel from './EingabeTitel.vue';
+import TableZuege from './TableZuege/TableZuege.vue';
+import TableMonths from './TableZuege/TableMonths.vue';
+import * as UebersichtsCalculator from './UebersichtsCalculator.js';
 
 export default {
   name: "UebersichtsBereich",
   data: function() {
     return {
       spielzug: 1,
+      aktAnsicht: 1,      
       beginnEins: false,
       beginnZwei: false,
       scrabbleZuege: [],
       lastZug: [],
+      spielGeschlossen: false,
       zug: { 
         totalPunkteZug: 0,
         punktezug: "",
         bingo: false,
         hatAngezweifelt: false, 
-        angezweifeltKorrekt: 0
+        angezweifeltKorrekt: 0,
+        hatSpielBeendet: false,
+        restpunkteGegner: 0
       },
       tableBottomWithTitelAndTotal: 0,
-      anzInTable: 0
+      anzInTable: 0,
+      resultForMonth: []
     };
   },
   mounted: function () {
@@ -59,42 +78,72 @@ export default {
       this.beginnEins=(beginner==1);
       this.beginnZwei=(!this.beginnEins);
     },
+    saveGame(){
+      
+    },
+    onAnsichtChange(aktAnsicht){
+      this.aktAnsicht=aktAnsicht;
+      if(aktAnsicht===2){
+        this.$http.get('http://localhost:3000/', {
+          params: {
+            startDate:'01-12-2018',
+            endDate:'31-12-2018'
+          },
+        }).then(response => {
+            this.resultForMonth=response.data;
+        })
+      }
+    },
     addNewScrabblezug() {
+      // Validierung ob etwas drin steht
       const eingabePunkteZug=this.zug.punkteZug;
       if (eingabePunkteZug == "" || eingabePunkteZug.length == 0 || eingabePunkteZug == null || isNaN(eingabePunkteZug)) {
         return;
       }  
+      // Die Daten zum eben gespielten Zug übernehmen
+      this.spielGeschlossen=this.zug.hatSpielBeendet;
       let newScrabblezug = {
         punkteZug: eingabePunkteZug,
         bingo: this.zug.bingo,
         hatAngezweifelt: false,
-        hatKorrektAngezweifelt: 0
+        hatKorrektAngezweifelt: 0,
+        hatSpielBeendet: this.zug.hatSpielBeendet,
+        restpunkte: 0,
+        bonusPunkte: this.zug.restpunkteGegner
       };
       if (this.spielzug % 2 == 0) {
+        // Der letzte gemerkte Zug von vorher
         let oldScrabblezug = {
           punkteZug: this.lastZug.punkteZug,
           bingo: this.lastZug.bingo,
           hatAngezweifelt: this.zug.hatAngezweifelt,
-          hatKorrektAngezweifelt: this.zug.angezweifeltKorrekt
+          hatKorrektAngezweifelt: this.zug.angezweifeltKorrekt,
+          hatSpielBeendet: false,
+          restpunkte: -(this.zug.restpunkteGegner),
+          bonusPunkte: 0
         };
         newScrabblezug.hatAngezweifelt=this.lastZug.gegnerHatAngezweifelt;
         newScrabblezug.hatKorrektAngezweifelt=this.lastZug.gegnerHatKorrektAngezweifelt;
-        let dpZugZwei = getDoppelzugZuBeginner(this.beginnEins, oldScrabblezug, newScrabblezug);
+        let dpZugZwei = UebersichtsCalculator.getDoppelzugZuBeginner(this.beginnEins, oldScrabblezug, newScrabblezug);
         this.scrabbleZuege = this.scrabbleZuege.slice(
           0,
           this.scrabbleZuege.length - 1
         );
-        calcDoppelzugTotal(dpZugZwei);        
+        UebersichtsCalculator.calcDoppelzugTotal(dpZugZwei);        
         this.scrabbleZuege.push(dpZugZwei);
       } else {
+        // Vorbereiteter Zug des nachfolgenden Spielers
         let emptyScrabblezug = {
           punkteZug: 0,
           bingo: false,
           hatAngezweifelt: this.zug.hatAngezweifelt, 
-          hatKorrektAngezweifelt: this.zug.angezweifeltKorrekt          
+          hatKorrektAngezweifelt: this.zug.angezweifeltKorrekt,
+          hatSpielBeendet: false,
+          restpunkte: -(this.zug.restpunkteGegner),
+          bonusPunkte: 0
         };
-        let dpZugEins=getDoppelzugZuBeginner(this.beginnEins, newScrabblezug, emptyScrabblezug);
-        calcDoppelzugTotal(dpZugEins);
+        let dpZugEins=UebersichtsCalculator.getDoppelzugZuBeginner(this.beginnEins, newScrabblezug, emptyScrabblezug);
+        UebersichtsCalculator.calcDoppelzugTotal(dpZugEins);
         this.scrabbleZuege.push(dpZugEins);
       }
       this.lastZug.punkteZug = newScrabblezug.punkteZug;
@@ -128,38 +177,15 @@ export default {
     }
 },
   components: {
-    EingabeTitel, TableZuege
+    EingabeTitel, TableZuege, AnsichtsSwitch, TableMonths
   }
-};
-function getDoppelzugZuBeginner(beginnEins,scrabbleZugEins,scrabbleZugZwei){
-  let dpZugEins;
-  if(beginnEins) {
-    dpZugEins = [scrabbleZugEins, scrabbleZugZwei];
-  } else {
-    dpZugEins = [scrabbleZugZwei, scrabbleZugEins];
-  }
-  return dpZugEins;
-}
-function calcDoppelzugTotal(doppelzug) {
-  calcEinzelzugTotal(doppelzug[0]);
-  calcEinzelzugTotal(doppelzug[1]);  
-}
-function calcEinzelzugTotal(einzelzug) {
-  let zugTotal=parseInt(einzelzug.punkteZug);
-  if(einzelzug.bingo){
-    zugTotal+=50;
-  }
-  if(einzelzug.hatAngezweifelt&&einzelzug.hatKorrektAngezweifelt==0){
-    zugTotal-=10;
-  }
-  einzelzug.totalPunkteZug=zugTotal;
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .uebersicht{
-  
+
 }
 .inputArea{
   display: block;
@@ -168,4 +194,12 @@ function calcEinzelzugTotal(einzelzug) {
 	width: 50%;
   text-align: left
 }
+.ansichtsAuswahl{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+	width: 50%;
+  text-align: right
+}
+
 </style>

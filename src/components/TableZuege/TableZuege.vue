@@ -43,6 +43,12 @@ export default {
           result=result+' -10';
         }
       }
+      if(scrabbleZug.hatSpielBeendet){
+        result='(Beendet) | '+result+' + '+scrabbleZug.bonusPunkte.toString();
+      }
+      if(scrabbleZug.restpunkte<0){
+        result=result+' '+scrabbleZug.restpunkte.toString();
+      }
       return result;
     }
   },
