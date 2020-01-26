@@ -17,6 +17,8 @@
 </template>
 
 <script>
+import * as TotalCalculator from './TotalCalculator.js';
+
 export default {
   name: "TotalRow",
   props: {
@@ -27,27 +29,7 @@ export default {
   },
   methods: {
     getBetragSpieler(num_spieler) {
-      let total=[];
-      total[0]=0;
-      total[1]=0;
-      total[2]=0;      
-      total[3]=0;            
-      for (let index = 0; index < this.scrabbleZuege.length; index++) {
-        const doppelzug = this.scrabbleZuege[index];
-        if (typeof doppelzug[num_spieler-1] !== undefined) {
-          total[0] += parseInt(doppelzug[num_spieler-1].totalPunkteZug);
-          if(doppelzug[num_spieler-1].bingo){
-            total[1]++;
-          }
-          if(doppelzug[num_spieler-1].hatAngezweifelt){
-            total[2]++;
-            if(doppelzug[num_spieler-1].hatKorrektAngezweifelt==0){
-              total[3]++;
-            }
-          }
-        }
-      }
-      return total;
+      return TotalCalculator.getBetragProSpieler(num_spieler, this.scrabbleZuege);
     } 
   }   
 };

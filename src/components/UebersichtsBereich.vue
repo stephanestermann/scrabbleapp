@@ -39,6 +39,7 @@ import EingabeTitel from './EingabeTitel.vue';
 import TableZuege from './TableZuege/TableZuege.vue';
 import TableMonths from './TableZuege/TableMonths.vue';
 import * as UebersichtsCalculator from './UebersichtsCalculator.js';
+import * as TotalCalculator from './TableZuege/TotalCalculator.js';
 
 export default {
   name: "UebersichtsBereich",
@@ -67,11 +68,9 @@ export default {
   },
   mounted: function () {
     window.addEventListener("resize", () => this.handleResize());
-    console.log("ADDDED");
   },
   destroyed: function () {
     document.removeEventListener("resize",  () => this.handleResize());
-    console.log("REMOVED");
   },
   methods: {
     onBeginnChange(beginner){
@@ -79,16 +78,29 @@ export default {
       this.beginnZwei=(!this.beginnEins);
     },
     saveGame(){
-      
+      const totalAnica=TotalCalculator.getBetragProSpieler(1, this.scrabbleZuege);
+      const totalSteph=TotalCalculator.getBetragProSpieler(2, this.scrabbleZuege);      
+      const scrabbleResult = {
+        scrabbler_ids: [1,2],
+        points: [totalAnica[0], totalSteph[0]],
+        won: [totalAnica[0]>totalSteph[0], totalSteph[0]>totalAnica[0]],
+        number_bingos: [totalAnica[1], totalSteph[1]],
+        number_doubtes: [totalAnica[2], totalSteph[2]],
+        number_wrong_doubtes: [totalAnica[2]-totalAnica[3], totalSteph[2]-totalSteph[3]],
+        number_correct_doubtes: [totalAnica[3], totalSteph[3]],
+        game_ended: [totalAnica[4], totalSteph[4]],
+        left_points: [totalAnica[5], totalSteph[5]]
+      }
+      this.$http.post('http://localhost:3000/scrabbleResult', scrabbleResult);
     },
     onAnsichtChange(aktAnsicht){
       this.aktAnsicht=aktAnsicht;
       if(aktAnsicht===2){
         this.$http.get('http://localhost:3000/', {
-          params: {
-            startDate:'01-12-2018',
-            endDate:'31-12-2018'
-          },
+          // params: {
+          //   startDate:'01-12-2018',
+          //   endDate:'31-12-2018'
+          // },
         }).then(response => {
             this.resultForMonth=response.data;
         })
@@ -159,7 +171,6 @@ export default {
       this.calcAnzInTableSichtbar();
     },
     handleResize(){
-      console.log("resize");
       this.anzInTable=0;
       this.calcAnzInTableSichtbar();
     },

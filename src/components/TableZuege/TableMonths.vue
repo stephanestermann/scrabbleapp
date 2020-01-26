@@ -5,11 +5,12 @@
       <div class="rTableHead"><strong>Anica</strong></div>
       <div class="rTableHead"><strong>Steph</strong></div>
     </div>
-    <div class="rTableRow" v-for="n in resultForMonth.length/2">
+    {{resultForMonth}}
+    <!-- <div class="rTableRow" v-for="n in resultForMonth.length/2">
       <div class="rTableCell">{{resultForMonth[n*2-2].game_date}}</div>
       <div class="rTableCell">Punkte:{{resultForMonth[n*2-2].points}}<br />Bingos:{{resultForMonth[n*2-2].number_bingos}}</div>
       <div class="rTableCell">Punkte:{{resultForMonth[n*2-1].points}}<br />Bingos:{{resultForMonth[n*2-1].number_bingos}}</div>
-    </div>
+    </div> -->
   </div> 
 </template>
 
