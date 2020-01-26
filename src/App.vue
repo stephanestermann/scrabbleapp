@@ -4,7 +4,7 @@
 		<div class="header-limiter">
       <h1>
         <img alt="Vue logo" src="./assets/Scrabble.jpg">
-	 		  Steph's Scrabble-App mit Vue.js
+          Steph's Scrabble-App mit Vue.js
         <img alt="Vue logo" src="./assets/Scrabble.jpg">
       </h1>        
 		</div>
@@ -63,9 +63,9 @@ export default {
 }
 
 .rTableFoot {
- 	display: table-footer-group;
+  display: table-footer-group;
   font-weight: bold;
- 	background-color: #ddd;
+  background-color: #ddd;
 }
 .rTableBody {
   display: table-row-group;

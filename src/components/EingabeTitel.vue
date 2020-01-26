@@ -24,7 +24,7 @@ export default {
     };
   },
   methods: {
-    onBeginnChange(event) {
+    onBeginnChange() {
       this.$emit('changed', this.beginner);
     },
     getIsSpielerAmZug(spielerNummer) {

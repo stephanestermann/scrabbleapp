@@ -29,7 +29,7 @@ export default {
     }
   },
   methods: {
-    getPunkteProZugString(scrabbleZug, scrabbleZugGegner, spielerNr) {
+    getPunkteProZugString(scrabbleZug) {
       let result='Punkte:'+scrabbleZug.punkteZug.toString();
       if(scrabbleZug.bingo){
         result=result+' + Bingo:50'

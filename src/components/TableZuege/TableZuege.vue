@@ -6,7 +6,7 @@
       <div class="rTableCell">...</div>
       <div class="rTableCell">...</div>
     </div>
-    <div class="rTableRow" v-for="(items, index) in scrabbleZuege">
+    <div class="rTableRow" v-for="(items, index) in scrabbleZuege" :key="index">
       <div class="rTableCell" v-if="anzInTable<=0 || index+1+anzInTable>scrabbleZuege.length">{{index+1}}</div>
       <div class="rTableCell" v-if="anzInTable<=0 || index+1+anzInTable>scrabbleZuege.length">{{getPunkteProZugString(items[0],items[1],1)}}</div>
       <div class="rTableCell" v-if="anzInTable<=0 || index+1+anzInTable>scrabbleZuege.length">{{getPunkteProZugString(items[1],items[0],2)}}</div>
@@ -32,7 +32,7 @@ export default {
     }
   },
   methods: {
-    getPunkteProZugString(scrabbleZug, scrabbleZugGegner, spielerNr) {
+    getPunkteProZugString(scrabbleZug) {
       let result='Punkte:'+scrabbleZug.punkteZug.toString();
       if(scrabbleZug.bingo){
         result=result+' + Bingo:50'

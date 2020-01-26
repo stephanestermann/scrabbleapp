@@ -30,11 +30,9 @@ export default {
   },
   mounted: function () {
     this.ansicht=this.aktAnsicht;
-        console.log("Mounted ansicht");
   },  
   methods: {
-    onAnsichtChange(event) {
-        console.log("Ansicht changed");
+    onAnsichtChange() {
       this.$emit('changed', parseInt(this.ansicht));
     }
   }
