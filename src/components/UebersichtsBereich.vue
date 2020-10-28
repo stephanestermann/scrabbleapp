@@ -63,7 +63,8 @@ export default {
       },
       tableBottomWithTitelAndTotal: 0,
       anzInTable: 0,
-      resultForMonth: []
+      resultForMonth: [],
+      serverDomain: process.env.VUE_APP_SERVERDOMAIN
     };
   },
   mounted: function () {
@@ -91,12 +92,17 @@ export default {
         game_ended: [totalAnica[4], totalSteph[4]],
         left_points: [totalAnica[5], totalSteph[5]]
       }
-      this.$http.post('http://localhost:3000/scrabbleResult', scrabbleResult);
+      this.$http.get(this.serverDomain).then(response => {
+        const res = response
+        alert('OUTPUT: ' + res.data.message + scrabbleResult.points)
+      })
+      // alert('url: ' + this.serverDomain + 'scrabbleResult')
+      // this.$http.post(this.serverDomain + 'scrabbleResult', scrabbleResult);
     },
     onAnsichtChange(aktAnsicht){
       this.aktAnsicht=aktAnsicht;
       if(aktAnsicht===2){
-        this.$http.get('http://localhost:3000/', {
+        this.$http.get(this.serverDomain, {
           // params: {
           //   startDate:'01-12-2018',
           //   endDate:'31-12-2018'
