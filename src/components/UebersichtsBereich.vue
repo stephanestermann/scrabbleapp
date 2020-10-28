@@ -40,6 +40,9 @@ import TableZuege from './TableZuege/TableZuege.vue';
 import TableMonths from './TableZuege/TableMonths.vue';
 import * as UebersichtsCalculator from './UebersichtsCalculator.js';
 import * as TotalCalculator from './TableZuege/TotalCalculator.js';
+import ResultService from '@/resultService.js'
+
+const resultServiceInstance = new ResultService();
 
 export default {
   name: "UebersichtsBereich",
@@ -92,24 +95,12 @@ export default {
         game_ended: [totalAnica[4], totalSteph[4]],
         left_points: [totalAnica[5], totalSteph[5]]
       }
-      this.$http.get(this.serverDomain).then(response => {
-        const res = response
-        alert('OUTPUT: ' + res.data.message + scrabbleResult.points)
-      })
-      // alert('url: ' + this.serverDomain + 'scrabbleResult')
-      // this.$http.post(this.serverDomain + 'scrabbleResult', scrabbleResult);
+      resultServiceInstance.saveGame(scrabbleResult);
     },
     onAnsichtChange(aktAnsicht){
       this.aktAnsicht=aktAnsicht;
       if(aktAnsicht===2){
-        this.$http.get(this.serverDomain, {
-          // params: {
-          //   startDate:'01-12-2018',
-          //   endDate:'31-12-2018'
-          // },
-        }).then(response => {
-            this.resultForMonth=response.data;
-        })
+        resultServiceInstance.loadAllresults()
       }
     },
     addNewScrabblezug() {

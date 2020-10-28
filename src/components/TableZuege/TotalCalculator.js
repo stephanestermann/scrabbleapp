@@ -12,7 +12,8 @@ export function getBetragProSpieler(num_spieler, scrabbleZuege) {
   total[2]=0;      
   total[3]=0;            
   total[4]=0;
-  total[5]=0;                
+  total[5]=0;
+  total[6]=0;
   for (let index = 0; index < scrabbleZuege.length; index++) {
     const doppelzug = scrabbleZuege[index];
     if (typeof doppelzug[num_spieler-1] !== undefined) {
