@@ -1,5 +1,5 @@
 <template>
-  <div class="rTable">
+  <div class="rTable" :disabled="spielGeschlossen">
     <TitelRow  />
     <div class="rTableRow" ref="tableZuege" v-if="anzInTable>0">
       <div class="rTableCell">...</div>
@@ -29,6 +29,10 @@ export default {
     scrabbleZuege: {
         type: Array,
         default: function () { return [] }
+    },
+    spielGeschlossen: {
+        type: Boolean,
+        required: true
     }
   },
   methods: {

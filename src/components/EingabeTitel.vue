@@ -48,6 +48,7 @@ export default {
   display: block;
   margin-left: auto;
   margin-right: auto;
+  text-align: center;
 }
 .nameLabel {
   text-decoration: underline;

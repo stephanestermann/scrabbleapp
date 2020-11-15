@@ -1,8 +1,14 @@
 import Vue from 'vue';
 import App from './App.vue';
 import axios from 'axios';
-Vue.prototype.$http = axios
+import VueMaterial from 'vue-material';
+import router from './router'
+import 'vue-material/dist/vue-material.min.css';
+import 'vue-material/dist/theme/default.css';
 
+Vue.use(VueMaterial)
+
+Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
 // Filter that transform text to uppercase.
@@ -22,5 +28,6 @@ if(value.length <= length) {
 });    
 
 new Vue({
+  router: router,
   render: h => h(App)
 }).$mount('#app')

@@ -1,43 +1,50 @@
 <template>
-<div class="uebersicht">
-  <form v-if="!spielGeschlossen" v-on:submit.prevent="addNewScrabblezug">
-    <EingabeTitel :spielzug="spielzug" @changed="onBeginnChange" />
-    <div class="inputArea">
-    <div>
-    <label>Wortpunkte für diesen Zug: <input v-model="zug.punkteZug" maxlength="3" /></label>
-    <br />
-    <label>Bingo: <input type="checkbox" v-model="zug.bingo" /></label>
-    <label>&nbsp;&nbsp;Gegner hat angezweifelt: <input type="checkbox" v-model="zug.hatAngezweifelt" /></label>
-    <label>&nbsp;&nbsp;Spiel beendet: <input type="checkbox" v-model="zug.hatSpielBeendet" /></label>
-    </div>    
-    <div v-if="zug.hatAngezweifelt">
-      <label>Wort korrekt <input type="radio" id="Wort korrekt" value=0 v-model="zug.angezweifeltKorrekt" /></label>
-      &nbsp;&nbsp;
-      <label>Wort falsch <input type="radio" id="Wort falsch" value=1 v-model="zug.angezweifeltKorrekt" /></label>
+  <div class="page-container">
+    <div class="inner-toolbar">
+      <form v-if="!spielGeschlossen" v-on:submit.prevent="addNewScrabblezug">
+        <EingabeTitel :spielzug="spielzug" @changed="onBeginnChange" />
+        <div class="inputArea">
+          <div>
+            <label>Wortpunkte für diesen Zug: <input v-model="zug.punkteZug" maxlength="3" /></label>
+            <br />
+            <label>Bingo: <input type="checkbox" v-model="zug.bingo" /></label>
+            <label>&nbsp;&nbsp;Gegner hat angezweifelt: <input type="checkbox" v-model="zug.hatAngezweifelt" /></label>
+            <label>&nbsp;&nbsp;Spiel beendet: <input type="checkbox" v-model="zug.hatSpielBeendet" /></label>
+          </div>    
+          <div v-if="zug.hatAngezweifelt">
+            <label>Wort korrekt <input type="radio" id="Wort korrekt" value=0 v-model="zug.angezweifeltKorrekt" /></label>
+            &nbsp;&nbsp;
+            <label>Wort falsch <input type="radio" id="Wort falsch" value=1 v-model="zug.angezweifeltKorrekt" /></label>
+          </div>
+          <div v-if="zug.hatSpielBeendet">
+            <label>Restpunkte Gegner: <input v-model="zug.restpunkteGegner" maxlength="2"/></label>
+          </div>
+          <br />
+          <button type="submit" v-if="(beginnEins || beginnZwei)">Scrabblezug eingeben</button>
+          <br /><br />
+        </div>    
+      </form>
+      <div>
+        <md-dialog-confirm
+          :md-active.sync="saveConfirm"
+          md-title="Spiel wirklich beenden?"
+          md-content="Willst Du das Spiel wirklich beenden und es in die Datenbank schreiben?<br>Das Spiel kann danach nicht wieder aufgenommen werden."
+          md-confirm-text="Ja"
+          md-cancel-text="Nein"
+          @md-cancel="onNoEnd"
+          @md-confirm="onYesEnd"
+        />
+      </div>
     </div>
-    <div v-if="zug.hatSpielBeendet">
-      <label>Restpunkte Gegner: <input v-model="zug.restpunkteGegner" maxlength="2"/></label>
-    </div>
-    <br />
-    <button type="submit" v-if="(beginnEins || beginnZwei)">Scrabblezug eingeben</button>
-    <br /><br />
-    </div>    
-  </form>
-  <div class="saveGame" v-if="spielGeschlossen">
-    <button v-on:click="saveGame">Spiel speichern !</button>
-    <br /><br />
+    <md-content class="md-scrollbar">
+      <TableZuege :scrabbleZuege="scrabbleZuege" :spielGeschlossen="spielGeschlossen"/>
+    </md-content>
   </div>
-  <AnsichtsSwitch class="ansichtsAuswahl" :aktAnsicht="aktAnsicht" @changed="onAnsichtChange" />
-  <TableZuege v-if="aktAnsicht===1" :scrabbleZuege="scrabbleZuege" />     
-  <TableMonths v-if="aktAnsicht===2" :resultForMonth="resultForMonth" />       
-</div>
 </template>
 
 <script>
-import AnsichtsSwitch from './AnsichtsSwitch.vue';
 import EingabeTitel from './EingabeTitel.vue';
 import TableZuege from './TableZuege/TableZuege.vue';
-import TableMonths from './TableZuege/TableMonths.vue';
 import * as UebersichtsCalculator from './UebersichtsCalculator.js';
 import * as TotalCalculator from './TableZuege/TotalCalculator.js';
 import ResultService from '@/resultService.js'
@@ -46,10 +53,12 @@ const resultServiceInstance = new ResultService();
 
 export default {
   name: "UebersichtsBereich",
+  components: {
+    EingabeTitel, TableZuege
+  },
   data: function() {
     return {
       spielzug: 1,
-      aktAnsicht: 1,      
       beginnEins: false,
       beginnZwei: false,
       scrabbleZuege: [],
@@ -66,8 +75,8 @@ export default {
       },
       tableBottomWithTitelAndTotal: 0,
       anzInTable: 0,
-      resultForMonth: [],
-      serverDomain: process.env.VUE_APP_SERVERDOMAIN
+      serverDomain: process.env.VUE_APP_SERVERDOMAIN,
+      saveConfirm: false
     };
   },
   mounted: function () {
@@ -97,20 +106,17 @@ export default {
       }
       resultServiceInstance.saveGame(scrabbleResult);
     },
-    onAnsichtChange(aktAnsicht){
-      this.aktAnsicht=aktAnsicht;
-      if(aktAnsicht===2){
-        resultServiceInstance.loadAllresults()
-      }
-    },
     addNewScrabblezug() {
       // Validierung ob etwas drin steht
       const eingabePunkteZug=this.zug.punkteZug;
-      if (eingabePunkteZug == "" || eingabePunkteZug.length == 0 || eingabePunkteZug == null || isNaN(eingabePunkteZug)) {
+      if (eingabePunkteZug === "" || eingabePunkteZug.length === 0 || eingabePunkteZug === null || isNaN(eingabePunkteZug) ||
+          (this.beginnEins === false && this.beginnZwei === false)) {
         return;
-      }  
+      }
+      if (this.showEndingConfirm() && !this.spielGeschlossen) {
+        return;
+      }
       // Die Daten zum eben gespielten Zug übernehmen
-      this.spielGeschlossen=this.zug.hatSpielBeendet;
       let newScrabblezug = {
         punkteZug: eingabePunkteZug,
         bingo: this.zug.bingo,
@@ -166,6 +172,9 @@ export default {
       this.zug.hatAngezweifelt = false;      
       this.spielzug++;
       this.calcAnzInTableSichtbar();
+      if (this.spielGeschlossen) {
+        this.saveGame()
+      }
     },
     handleResize(){
       this.anzInTable=0;
@@ -182,25 +191,42 @@ export default {
       //     this.anzInTable=1;
       //   }
       // }
+    },
+    showEndingConfirm() {
+      if (this.zug.hatSpielBeendet) {
+        this.saveConfirm = true;
+        return true;
+      }
+      return false;
+    },
+    onYesEnd () {
+     this.spielGeschlossen = this.zug.hatSpielBeendet;
+     this.addNewScrabblezug();
+    },
+    onNoEnd () {
+      // Nothing to do...
     }
-},
-  components: {
-    EingabeTitel, TableZuege, AnsichtsSwitch, TableMonths
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.uebersicht{
-
+.md-content {
+  /* FixMe: Calculate dynamic */
+  max-height: calc(100vh - 320px);
+  overflow: auto;
+}
+.inner-toolbar {
+  margin-top: 10px;
+  width: 100%;
 }
 .inputArea{
   display: block;
   margin-left: auto;
   margin-right: auto;
 	width: 50%;
-  text-align: left
+  text-align: center
 }
 .ansichtsAuswahl{
   display: block;
