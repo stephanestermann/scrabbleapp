@@ -6,11 +6,11 @@ const GET_ALL_REQUEST = SERVER_DOMAIN + 'api/results/'
 
 export default class ResultService {
 
-    loadAllresults() {
-        axios.get(GET_ALL_REQUEST).then(response => {
-            const res = response
-            alert('OUTPUT: ' + res.data)
-        })
+    async loadAllresults() {
+        const response = await axios.get(GET_ALL_REQUEST); //.then(response => {
+        const data = await response.data;
+        
+        return data;
     }
 
     saveGame(scrabbleResult) {
