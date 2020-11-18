@@ -95,6 +95,7 @@ export default {
       const totalSteph=TotalCalculator.getBetragProSpieler(2, this.scrabbleZuege);      
       const scrabbleResult = {
         scrabbler_ids: [1,2],
+        beginner: [this.beginnEins, this.beginnZwei],
         points: [totalAnica[0], totalSteph[0]],
         won: [totalAnica[0]>totalSteph[0], totalSteph[0]>totalAnica[0]],
         number_bingos: [totalAnica[1], totalSteph[1]],
