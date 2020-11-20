@@ -5,18 +5,12 @@
       <md-table-toolbar>
         <h1 class="md-title">Gesamtstatistik</h1>
       </md-table-toolbar>
-
       <md-table-row slot="md-table-row" slot-scope="{ item }">
-        <md-table-cell md-label="ID" md-sort-by="id" md-numeric>{{ item.scrabblerId }}</md-table-cell>
-        <md-table-cell md-label="Begonnen" md-sort-by="name">{{ item.beginner }}</md-table-cell>
-        <md-table-cell md-label="Punkte" md-sort-by="email">{{ item.point }}</md-table-cell>
-        <md-table-cell md-label="Gewonnen" md-sort-by="gender">{{ item.won }}</md-table-cell>
-        <md-table-cell md-label="Bingos" md-sort-by="title">{{ item.numberBingos }}</md-table-cell>
-        <md-table-cell md-label="Anzweiflungen" md-sort-by="title">{{ item.numberDoubtes }}</md-table-cell>
-        <md-table-cell md-label="Falsch angezweifelt" md-sort-by="title">{{ item.numberWrongDoubtes }}</md-table-cell>
-        <md-table-cell md-label="Korrekt angezweifelt" md-sort-by="title">{{ item.numberCorrectDoubtes }}</md-table-cell>
-        <md-table-cell md-label="Spiel beendet" md-sort-by="title">{{ item.gameEnded }}</md-table-cell>
-        <md-table-cell md-label="Restpunkte" md-sort-by="title">{{ item.leftPoints }}</md-table-cell>
+        <md-table-head>{{ item.label }}</md-table-head>
+        <md-table-head v-if="item.label === 'Name'">{{ item.valueOne }}</md-table-head>
+        <md-table-cell v-else>{{ item.valueOne }}</md-table-cell>
+        <md-table-head v-if="item.label === 'Name'">{{ item.valueTwo }}</md-table-head>
+        <md-table-cell v-else>{{ item.valueTwo }}</md-table-cell>
       </md-table-row>
     </md-table>
   </div>    
@@ -69,7 +63,7 @@ export default {
       this.aktAnsicht=aktAnsicht;
       if(aktAnsicht===2){
         resultServiceInstance.loadAllresults().then(res => {
-          vm.results = res.data;
+          vm.results = res;
         }).catch(err => {
           vm.fault = err
         })
