@@ -5,8 +5,10 @@ import VueMaterial from 'vue-material';
 import router from './router'
 import 'vue-material/dist/vue-material.min.css';
 import 'vue-material/dist/theme/default.css';
+import { MonthPicker } from 'vue-month-picker'
 
 Vue.use(VueMaterial)
+Vue.use(MonthPicker)
 
 Vue.prototype.$http = axios
 Vue.config.productionTip = false

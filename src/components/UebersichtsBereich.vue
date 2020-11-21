@@ -100,8 +100,8 @@ export default {
         won: [totalAnica[0]>totalSteph[0], totalSteph[0]>totalAnica[0]],
         number_bingos: [totalAnica[1], totalSteph[1]],
         number_doubtes: [totalAnica[2], totalSteph[2]],
-        number_wrong_doubtes: [totalAnica[2]-totalAnica[3], totalSteph[2]-totalSteph[3]],
-        number_correct_doubtes: [totalAnica[3], totalSteph[3]],
+        number_wrong_doubtes: [totalAnica[3], totalSteph[3]],
+        number_correct_doubtes: [totalAnica[2]-totalAnica[3], totalSteph[2]-totalSteph[3]],
         game_ended: [totalAnica[4], totalSteph[4]],
         left_points: [totalAnica[5], totalSteph[5]]
       }

@@ -3,7 +3,7 @@ export function getBetragProSpieler(num_spieler, scrabbleZuege) {
   // 0: Total Punkte
   // 1: Anzahl Bingos
   // 2: Anzahl Anzweiflungen
-  // 3: Anzahl korrekte Anzweiflungen
+  // 3: Anzahl falsche Anzweiflungen
   // 4: Spiel beendet
   // 5: Restpunkte
   // 6: Bonuspunkte  

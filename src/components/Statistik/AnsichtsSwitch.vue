@@ -1,31 +1,38 @@
 <template>
 <div class="ansichtsSwitch">
-  <label class="">Aktuelles Spiel</label>
-  <input type="radio" id="spiel" value=1 v-model="ansicht" v-on:change="onAnsichtChange"/>
-    &nbsp;
-  <label class="">Monatsübersicht</label>&nbsp;
-  <input type="radio" id="monat" value=2 v-model="ansicht" v-on:change="onAnsichtChange"/>
-  <select v-model="selected">
-    <option disabled value="">Anzuzeigenden Monat wählen</option>
-    <option>Januar</option>
-    <option>Februar</option>
-    <option>März</option>
-  </select>
+  <md-radio v-model="ansicht" @change="onAnsichtChange" value="1">Gesamtstatistik</md-radio>
+  <md-radio v-model="ansicht" @change="onAnsichtChange" value="2">Monatsstatistik</md-radio>
+  <md-radio v-model="ansicht" @change="onAnsichtChange" value="3">Jahresstatistik</md-radio>
+  <month-picker 
+    lang="de" 
+    v-if="showPicker"
+    :year-only="ansicht === '3' ? true : false"
+    @change="showDate">
+  </month-picker>
   <br />
 </div>
 </template>
 
 <script>
+import { MonthPicker } from 'vue-month-picker'
 
 export default {
   name: "AnsichtsSwitch",
+  components: { MonthPicker },
   props: {
       aktAnsicht: Number
   },
   data: function() {
     return {
-      ansicht: 0,
-      selected: ''
+      ansicht: "1",
+      selected: '',
+			date: {
+				from: null,
+				to: null,
+				month: null,
+				year: null
+      },
+      showPicker: false
     };
   },
   mounted: function () {
@@ -33,8 +40,12 @@ export default {
   },  
   methods: {
     onAnsichtChange() {
+      this.showPicker = (this.ansicht === '2' || this.ansicht === '3') ? true : false;
       this.$emit('changed', parseInt(this.ansicht));
-    }
+    },
+    showDate (date) {
+			this.date = date
+		}
   }
 };
 </script>
