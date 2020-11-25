@@ -32,13 +32,10 @@
 </template>
 
 <script>
-import UebersichtsBereich from './components/UebersichtsBereich.vue'
 
 export default {
   name: 'app',
-  components: {
-    UebersichtsBereich
-  },
+  components: {},
   data: function() {
     return {
       menuVisible: false
