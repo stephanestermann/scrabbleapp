@@ -103,7 +103,9 @@ export default {
         number_wrong_doubtes: [totalAnica[3], totalSteph[3]],
         number_correct_doubtes: [totalAnica[2]-totalAnica[3], totalSteph[2]-totalSteph[3]],
         game_ended: [totalAnica[4], totalSteph[4]],
-        left_points: [totalAnica[5], totalSteph[5]]
+        left_points: [totalAnica[5], totalSteph[5]],
+        largestBingoScore: [totalAnica[7], totalSteph[7]],
+        largestNonBingoScore: [totalAnica[8], totalSteph[8]],
       }
       resultServiceInstance.saveGame(scrabbleResult);
     },
