@@ -10,6 +10,8 @@ export class ResultStatistic {
        this.totCorrectDoubtes = 0;
        this.totGamesEnded = 0;
        this.totLeftPoints = 0;
+       this.largestBingoScore = 0;
+       this.largestNonBingoScore = 0;       
     }
     addStatistikResponse(responseStatistikData) {
       const vm = this;
@@ -24,6 +26,8 @@ export class ResultStatistic {
             vm.totWrongDoubtes = ele.totWrongDoubtes;
             vm.totGamesEnded = ele.totGamesEnded;
             vm.totLeftPoints = ele.totLeftPoints;
+            vm.largestBingoScore = ele.largestBingoScore;
+            vm.largestNonBingoScore = ele.largestNonBingoScore;         
          }         
       });
     }
@@ -39,6 +43,8 @@ export class ResultStatistic {
        newArray.push(this.getLabelValueObject('Anzahl falsche Anzweiflungen', this.totWrongDoubtes, anotherResultStatistic.totWrongDoubtes));
        newArray.push(this.getLabelValueObject('Anzahl Spielbeendungen', this.totGamesEnded, anotherResultStatistic.totGamesEnded));
        newArray.push(this.getLabelValueObject('Total übrige Punkte', this.totLeftPoints, anotherResultStatistic.totLeftPoints));
+       newArray.push(this.getLabelValueObject('Bester Bingo', this.largestBingoScore, anotherResultStatistic.largestBingoScore));
+       newArray.push(this.getLabelValueObject('Bester Zug', this.largestNonBingoScore, anotherResultStatistic.largestNonBingoScore));
 
        return newArray
     }
