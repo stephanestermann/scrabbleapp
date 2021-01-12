@@ -24,21 +24,51 @@
       </md-list>
     </md-drawer>
 
-    <md-content class="first-content">
+    <md-content >
       <router-view></router-view>
-        <!-- <Uebersichts-bereich></Uebersichts-bereich> -->
     </md-content>
+
+    <md-toolbar :class="getToolbarClass">
+      <div class="md-layout toolbar-layout">
+        <div class="md-layout-item md-size-15">
+          {{$store.state.lastAction}}
+        </div>
+        <div class="md-layout-item">
+            <md-progress-spinner v-if="isLoading" :md-diameter="13" :md-stroke="1.8" md-mode="indeterminate" />
+        </div>
+        <div class="md-layout-item server-error">
+          {{$store.state.serverError}}
+        </div>  
+      </div>
+    </md-toolbar>
+
   </div>
 </template>
 
 <script>
 
+const POLLING_INTERVALL_MS = 299000
+                             
 export default {
   name: 'app',
   components: {},
   data: function() {
     return {
       menuVisible: false
+    }
+  },
+  created: function () {
+    this.$store.dispatch('results/loadAllresults').then(() => {
+      setInterval(() => { this.$store.dispatch('results/loadAllresults') }, POLLING_INTERVALL_MS)
+    });
+  },
+  computed: {
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
+    getToolbarClass() {
+      const colorClass = this.$store.state.serverError ? 'md-accent' : 'md-transparent'
+      return 'md-dense ' + colorClass
     }
   }
 }
@@ -52,6 +82,12 @@ export default {
   }
   .outer-toolbar {
     max-height: 100px;
+  }
+  .toolbar-layout {
+    width: 100%;
+  }
+  .server-error {
+   text-align: right;
   }
   .md-drawer {
     width: 200px !important;

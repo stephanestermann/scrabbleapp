@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import store from './store'
 import App from './App.vue';
 import axios from 'axios';
 import VueMaterial from 'vue-material';
@@ -31,5 +32,6 @@ if(value.length <= length) {
 
 new Vue({
   router: router,
+  store,
   render: h => h(App)
 }).$mount('#app')

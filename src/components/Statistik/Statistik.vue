@@ -18,9 +18,6 @@
 
 <script>
 import AnsichtsSwitch from '@/components/Statistik/AnsichtsSwitch.vue';
-import ResultService from '@/resultService.js'
-
-const resultServiceInstance = new ResultService();
 
 export default {
   name: "ZugCells",
@@ -40,36 +37,20 @@ export default {
   data: function() {
     return {
       aktAnsicht: 1,
-      results: [],
       fault: undefined
     };
   },
-  methods: {
-    getPunkteProZugString(scrabbleZug) {
-      let result='Punkte:'+scrabbleZug.punkteZug.toString();
-      if(scrabbleZug.bingo){
-        result=result+' + Bingo:50'
-      }
-      if(scrabbleZug.hatAngezweifelt){
-        result='(Z) | '+result;
-        if(scrabbleZug.hatKorrektAngezweifelt==0){
-          result=result+' -10';
-        }
-      }
-      return result;
-    },
-    onAnsichtChange(aktAnsicht){
-      const vm = this
-      this.aktAnsicht=aktAnsicht;
-      if(aktAnsicht===2){
-        resultServiceInstance.loadAllresults().then(res => {
-          vm.results = res;
-        }).catch(err => {
-          vm.fault = err
-        })
-      }
+  computed: {
+    results() {
+      console.log('Anzahl:' + this.$store.state.results.results.length)
+      return this.$store.state.results.results
     }
-  }  
+  },
+  methods: {
+    onAnsichtChange(aktAnsicht){
+      this.aktAnsicht=aktAnsicht;
+    }
+  }
 }
 </script>
 

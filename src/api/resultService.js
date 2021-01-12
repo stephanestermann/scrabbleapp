@@ -8,7 +8,7 @@ const GET_ALL_REQUEST = SERVER_DOMAIN + 'api/results/'
 export default class ResultService {
 
     async loadAllresults() {
-        const response = await axios.get(GET_ALL_REQUEST); //.then(response => {
+        const response = await axios.get(GET_ALL_REQUEST);
         const data = await response.data;
 
         let resultAnica = new ResultStatistic(1);
@@ -20,8 +20,8 @@ export default class ResultService {
         return res;
     }
 
-    saveGame(scrabbleResult) {
-        axios.post(POST_REQUEST, scrabbleResult);
+    async saveGame(scrabbleResult) {
+        return axios.post(POST_REQUEST, scrabbleResult);
     }
   
 }

@@ -47,9 +47,6 @@ import EingabeTitel from './EingabeTitel.vue';
 import TableZuege from './TableZuege/TableZuege.vue';
 import * as UebersichtsCalculator from './UebersichtsCalculator.js';
 import * as TotalCalculator from './TableZuege/TotalCalculator.js';
-import ResultService from '@/resultService.js'
-
-const resultServiceInstance = new ResultService();
 
 export default {
   name: "UebersichtsBereich",
@@ -107,7 +104,9 @@ export default {
         largestBingoScore: [totalAnica[7], totalSteph[7]],
         largestNonBingoScore: [totalAnica[8], totalSteph[8]],
       }
-      resultServiceInstance.saveGame(scrabbleResult);
+      this.$store.dispatch('results/saveGame', scrabbleResult).then(() => {
+        
+      })
     },
     addNewScrabblezug() {
       // Validierung ob etwas drin steht
@@ -217,7 +216,8 @@ export default {
 <style scoped>
 .md-content {
   /* FixMe: Calculate dynamic */
-  max-height: calc(100vh - 320px);
+  max-height: calc(100vh - 316px);
+  height: calc(100vh - 316px);
   overflow: auto;
 }
 .inner-toolbar {
