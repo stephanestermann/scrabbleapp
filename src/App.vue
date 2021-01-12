@@ -47,8 +47,10 @@
 
 <script>
 
-const POLLING_INTERVALL_MS = 299000
-                             
+import { timer } from '@/common/timer.js'
+
+const POLLING_INTERVALLS_MS = [299000, 294000, 289000, 284000, 279000, 274000, 269000, 264000, 259000, 254000]
+
 export default {
   name: 'app',
   components: {},
@@ -59,8 +61,8 @@ export default {
   },
   created: function () {
     this.$store.dispatch('results/loadAllresults').then(() => {
-      setInterval(() => { this.$store.dispatch('results/loadAllresults') }, POLLING_INTERVALL_MS)
-    });
+      this.setThePoller()
+    })
   },
   computed: {
     isLoading() {
@@ -69,6 +71,21 @@ export default {
     getToolbarClass() {
       const colorClass = this.$store.state.serverError ? 'md-accent' : 'md-transparent'
       return 'md-dense ' + colorClass
+    }
+  },
+  methods: {
+    setThePoller() {
+      const vm = this
+      const poller = new timer()
+      poller.start(function() {
+        vm.$store.dispatch('results/loadAllresults')
+        poller.set_interval(vm.getRandomIntervallRepeat());
+      }, vm.getRandomIntervallRepeat(), false)
+    },
+    getRandomIntervallRepeat() {
+      const intervall = POLLING_INTERVALLS_MS[Math.floor((Math.random() * 10))]
+      console.log("Neue Intervalldauer(ms): " + intervall)
+      return intervall
     }
   }
 }

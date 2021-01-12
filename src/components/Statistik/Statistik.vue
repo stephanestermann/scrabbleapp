@@ -42,7 +42,6 @@ export default {
   },
   computed: {
     results() {
-      console.log('Anzahl:' + this.$store.state.results.results.length)
       return this.$store.state.results.results
     }
   },
