@@ -1,10 +1,22 @@
 <template>
   <div>
-    <AnsichtsSwitch class="ansichtsAuswahl" :aktAnsicht="aktAnsicht" @changed="onAnsichtChange" />
+    <md-toolbar >
+      <h1 :id="aktAnsicht" class="md-title">
+        {{getTitle()}}
+        <date-picker 
+          v-if="(aktAnsicht!==1)"
+          :clearable="false"
+          :editable="false"
+          v-model="dateFormat"
+          valueType="format"
+          :type="getDatePickerType"
+          >
+        </date-picker>
+      </h1>
+    <AnsichtsSwitch  :aktAnsicht="aktAnsicht" @changed="onAnsichtChange" />      
+    </md-toolbar>
+    
     <md-table v-model="results" md-card>
-      <md-table-toolbar>
-        <h1 class="md-title">Gesamtstatistik</h1>
-      </md-table-toolbar>
       <md-table-row slot="md-table-row" slot-scope="{ item }">
         <md-table-head>{{ item.label }}</md-table-head>
         <md-table-head v-if="item.label === 'Name'">{{ item.valueOne }}</md-table-head>
@@ -19,11 +31,15 @@
 <script>
 import AnsichtsSwitch from '@/components/Statistik/AnsichtsSwitch.vue';
 import moment from 'moment'
+import DatePicker from 'vue2-datepicker';
+
+const DATE_FORMAT = 'YYYY-MM-DD'
 
 export default {
   name: "ZugCells",
   components: {
-    AnsichtsSwitch
+    AnsichtsSwitch,
+    DatePicker
   },  
   props: {
     anzInTable: {
@@ -38,10 +54,25 @@ export default {
   data: function() {
     return {
       aktAnsicht: 1,
-      fault: undefined
+      dateFormat: moment().format(DATE_FORMAT)
     };
   },
+  watch: {
+    dateFormat: function () {
+      this.onAnsichtChange(this.aktAnsicht)
+    }
+  },
   computed: {
+    getDatePickerType() {
+      switch (this.aktAnsicht) {
+        case 2:
+          return 'month'
+        case 3:
+          return 'year'
+        default:
+          return ''
+      }
+    },
     results() {
       switch (this.aktAnsicht) {
         case 2:
@@ -53,18 +84,30 @@ export default {
     }
   },
   methods: {
+    getTitle() {
+      switch (this.aktAnsicht) {
+        case 2:
+          return 'Monatsansicht für'
+        case 3:
+          return 'Jahresstatistik für'
+        default:
+          return 'Gesamtstatistik'
+      }
+    },
     onAnsichtChange(aktAnsicht){
       this.aktAnsicht=aktAnsicht;
       let paras = {
-        date: moment().format('YYYY-MM-DD')
+        date: moment().format(DATE_FORMAT)
       }
       switch (aktAnsicht) {
         case 2:
           paras.month = true
+          paras.date = this.dateFormat
           this.$store.dispatch('results/loadResultsByDate', paras)
           break;
         case 3:
           paras.year = true
+          paras.date = this.dateFormat
           this.$store.dispatch('results/loadResultsByDate', paras)
           break;      
         default:
