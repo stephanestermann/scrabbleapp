@@ -3,12 +3,16 @@ import {ResultStatistic} from '@/models/resultStatistic.js';
 
 const SERVER_DOMAIN = process.env.VUE_APP_SERVERDOMAIN;
 const POST_REQUEST = SERVER_DOMAIN + 'api/result/'
-const GET_ALL_REQUEST = SERVER_DOMAIN + 'api/results/'
+// const GET_ALL_REQUEST = SERVER_DOMAIN + 'api/results/'
+const GET_ALL_SUMMARIZED_REQUEST = SERVER_DOMAIN + 'api/results/summarized'
 
 export default class ResultService {
 
-    async loadAllresults() {
-        const response = await axios.get(GET_ALL_REQUEST);
+    async loadAllresults(paras) {
+        const params = {
+            params: paras
+        }
+        const response = await axios.get(GET_ALL_SUMMARIZED_REQUEST, params);
         const data = await response.data;
 
         let resultAnica = new ResultStatistic(1);

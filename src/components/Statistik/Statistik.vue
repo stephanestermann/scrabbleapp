@@ -18,6 +18,7 @@
 
 <script>
 import AnsichtsSwitch from '@/components/Statistik/AnsichtsSwitch.vue';
+import moment from 'moment'
 
 export default {
   name: "ZugCells",
@@ -42,12 +43,33 @@ export default {
   },
   computed: {
     results() {
-      return this.$store.state.results.results
+      switch (this.aktAnsicht) {
+        case 2:
+        case 3:
+          return this.$store.state.results.filteredResults
+        default:
+          return this.$store.state.results.results
+      }
     }
   },
   methods: {
     onAnsichtChange(aktAnsicht){
       this.aktAnsicht=aktAnsicht;
+      let paras = {
+        date: moment().format('YYYY-MM-DD')
+      }
+      switch (aktAnsicht) {
+        case 2:
+          paras.month = true
+          this.$store.dispatch('results/loadResultsByDate', paras)
+          break;
+        case 3:
+          paras.year = true
+          this.$store.dispatch('results/loadResultsByDate', paras)
+          break;      
+        default:
+          break;
+      }
     }
   }
 }

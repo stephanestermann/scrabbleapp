@@ -4,7 +4,9 @@ const resultServiceInstance = new ResultService();
 
 // initial state
 const state = () => ({
-  results: []
+  results: [],
+  filteredResults: []
+
 })
 
 // getters
@@ -27,6 +29,18 @@ const actions = {
       commit('setResults', res);
       commit('setLastActionStopLoading', 'Alle Resultate geladen!', { root: true })
     }).catch(err => {
+      commit('setResults', []);
+      commit('setServerErrorStopLoading', 'Resultate laden fehlgeschlagen! (' + err + ')', { root: true })
+    })    
+  },
+  loadResultsByDate ({ commit }, paras) {
+    commit('resetStatusInfos', undefined, { root: true })
+    commit('setLastActionWithLoading', 'Lade gewünschte Resultate...', { root: true })
+    resultServiceInstance.loadAllresults(paras).then(res => {
+      commit('setFilteredResults', res);
+      commit('setLastActionStopLoading', 'Gewünschte Resultate geladen!', { root: true })
+    }).catch(err => {
+      commit('setFilteredResults', []);
       commit('setServerErrorStopLoading', 'Resultate laden fehlgeschlagen! (' + err + ')', { root: true })
     })    
   },
@@ -46,16 +60,10 @@ const actions = {
 const mutations = {
   setResults (state, results) {
     state.results = results
+  },
+  setFilteredResults (state, filteredResults) {
+    state.filteredResults = filteredResults
   }
-  //   state.items.push({
-  //     id,
-  //     quantity: 1
-  //   })
-  // },
-
-  // setCheckoutStatus (state, status) {
-  //   state.checkoutStatus = status
-  // }
 }
 
 export default {
