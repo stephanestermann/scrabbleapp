@@ -21,6 +21,10 @@
           <md-icon>insert_chart_outlined</md-icon>
           <router-link class="md-list-item-text" to="/statistik">Statistik</router-link>
         </md-list-item>
+        <md-list-item @click="menuVisible = !menuVisible">
+          <md-icon>construction</md-icon>
+          <router-link class="md-list-item-text" to="/admin">Administration</router-link>
+        </md-list-item>
       </md-list>
     </md-drawer>
 
