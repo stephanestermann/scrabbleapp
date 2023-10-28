@@ -42,7 +42,8 @@
         </div>
         <div class="md-layout-item server-error">
           {{$store.state.serverError}}
-        </div>  
+        </div>
+        Version: {{ appVersion }}
       </div>
     </md-toolbar>
 
@@ -69,6 +70,9 @@ export default {
     })
   },
   computed: {
+    appVersion() {
+      return process.env.PACKAGE_VERSION
+    },
     isLoading() {
       return this.$store.state.isLoading;
     },
