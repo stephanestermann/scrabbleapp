@@ -71,7 +71,7 @@ export default {
   },
   computed: {
     appVersion() {
-      return process.env.PACKAGE_VERSION
+      return process.env.VUE_APP_VERSION
     },
     isLoading() {
       return this.$store.state.isLoading;

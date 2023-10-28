@@ -1,7 +1,4 @@
-var webpack = require('webpack');
-const fs = require('fs')
-const packageJson = fs.readFileSync('./package.json')
-const version = JSON.parse(packageJson).version || 0
+process.env.VUE_APP_VERSION = process.env.npm_package_version
 
 module.exports = {
     publicPath: process.env.NODE_ENV === 'production' ? '/scrabbleapp/dist/' : './',
@@ -11,13 +8,4 @@ module.exports = {
           title: 'Steph\'s Scrabble App'
         }
     },
-    configureWebpack: {
-      plugins: [
-          new webpack.DefinePlugin({
-              'process.env': {
-                  PACKAGE_VERSION: '"' + version + '"'
-              }
-          })
-      ]
-  },
 }
