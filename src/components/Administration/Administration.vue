@@ -27,7 +27,7 @@ const adminServiceInstance = new AdminService();
 const DATE_FORMAT = 'YYYY-MM-DD_HH:mm:ss'
 
 export default {
-  name: "Administration",
+  name: "AdministrationTools",
   components: {},  
   props: {},
   data: function() {
